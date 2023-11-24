@@ -1,6 +1,7 @@
 use crate::ast::{Arrow, Ast, Line, Name};
 use oni_comb_parser_rs::prelude::*;
 use std::char::{decode_utf16, REPLACEMENT_CHARACTER};
+use std::io::Read;
 
 fn space<'a>() -> Parser<'a, u8, ()> {
   elm_of(b" \t\r\n").of_many0().discard()
@@ -16,7 +17,7 @@ fn chars<'a>() -> Parser<'a, u8, String> {
     | elm_ref(b'r').map(|_| &b'\r')
     | elm_ref(b't').map(|_| &b'\t');
   let escape_sequence = elm_ref(b'\\') * special_char;
-  (none_ref_of(b"\\\"") | escape_sequence)
+  (none_ref_of(b"\\\":") | escape_sequence)
     .map(Clone::clone)
     .of_many1()
     .map_res(String::from_utf8)
@@ -36,8 +37,8 @@ fn utf16_chars<'a>() -> Parser<'a, u8, String> {
 }
 
 fn string<'a>() -> Parser<'a, u8, String> {
-  let str = surround(elm_ref(b'"'), chars().of_many0(), elm_ref(b'"'));
-  str.map(|strings| strings.concat())
+  let str2 = elm_ref(b'"').opt() * chars().of_many0() - elm_ref(b'"').opt();
+  (str2).map(|strings| strings.concat())
 }
 
 fn utf16_string<'a>() -> Parser<'a, u8, String> {
@@ -46,11 +47,11 @@ fn utf16_string<'a>() -> Parser<'a, u8, String> {
 }
 
 fn name<'a>() -> Parser<'a, u8, String> {
-  string()
+  space() * string() - space()
 }
 
 fn caption_string<'a>() -> Parser<'a, u8, String> {
-  utf16_string()
+  space() * utf16_string() - space()
 }
 
 fn caption<'a>() -> Parser<'a, u8, Option<String>> {
@@ -121,7 +122,7 @@ fn relation_ship<'a>() -> Parser<'a, u8, Ast> {
 }
 
 fn document<'a>() -> Parser<'a, u8, Ast> {
-  space() * (element() | relation_ship()) - space()
+  space() * (element().attempt() | relation_ship()) - space()
 }
 
 pub fn documents<'a>() -> Parser<'a, u8, Vec<Ast>> {
@@ -178,8 +179,26 @@ pub mod tests {
   pub fn test_user() {
     test_parser(
       user(),
-      "u:\"abc\"".as_bytes(),
+      r#"u:"abc""#.as_bytes(),
       Ast::Name(Name::of_user("abc".to_string(), None)),
+    );
+  }
+
+  #[test]
+  pub fn test_user_without_double_quote() {
+    test_parser(
+      user(),
+      r#"u:abc"#.as_bytes(),
+      Ast::Name(Name::of_user("abc".to_string(), None)),
+    );
+  }
+
+  #[test]
+  pub fn test_user_without_double_quote_with_caption() {
+    test_parser(
+      user(),
+      r#"u:abc:"ユーザ""#.as_bytes(),
+      Ast::Name(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
     );
   }
 
@@ -187,7 +206,7 @@ pub mod tests {
   pub fn test_user_with_caption() {
     test_parser(
       user(),
-      "u:\"abc\":\"ユーザ\"".as_bytes(),
+      r#"u:"abc":"ユーザ""#.as_bytes(),
       Ast::Name(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
     );
   }
@@ -331,9 +350,9 @@ pub mod tests {
     test_parser(
       documents(),
       r#"
-        u:"abc": "ユーザ"
+        u:abc: "ユーザ"
         c:"abc" :"ユーザ"
-        e: "abc":"ユーザ"
+        e: abc:"ユーザ"
         a:"abc":"ユーザ"
         p:"abc":"ユーザ"
         r:"abc":"ユーザ"
