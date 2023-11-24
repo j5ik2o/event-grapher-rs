@@ -3,19 +3,19 @@
 Document = (Element / Relationship)+
 
 # 要素
-Element = Actor / Event / Command / Aggregate / Policy / ReadModel
+Element = User / Event / Command / Aggregate / Policy / ReadModel
 
 # 関係は線や矢印で表現される
 Relationship = Line / Arrow
 
-# アクター
-Actor = 'ac:' WS Name
-
-# イベント
-Event = 'e:' WS Name
+# 利用者
+User = 'u:' WS Name
 
 # コマンド
 Command = 'c:' WS Name
+
+# イベント
+Event = 'e:' WS Name
 
 # 集約
 Aggregate = 'a:' WS Name
