@@ -3,28 +3,28 @@
 Document = (Element / Relationship)+
 
 # 要素
-Element = Actor / Event / Command / Aggregate / Policy / View
+Element = Actor / Event / Command / Aggregate / Policy / ReadModel
 
 # 関係は線や矢印で表現される
 Relationship = Line / Arrow
 
 # アクター
-Actor = 'actor' WS Name
+Actor = 'ac:' WS Name
 
 # イベント
-Event = 'event' WS Name
+Event = 'e:' WS Name
 
 # コマンド
-Command = 'command' WS Name
+Command = 'c:' WS Name
 
 # 集約
-Aggregate = 'aggregate' WS Name
+Aggregate = 'a:' WS Name
 
 # ポリシー
-Policy = 'policy' WS Name
+Policy = 'p:' WS Name
 
 # リードモデル
-ReadModel = 'view' WS Name
+ReadModel = 'r:' WS Name
 
 # 線の定義
 Line = Name WS '--' WS Name (WS ':' WS Caption)?
