@@ -9,22 +9,22 @@ Element = User / Event / Command / Aggregate / Policy / ReadModel
 Relationship = Line / Arrow
 
 # 利用者
-User = 'u:' WS Name
+User = 'u:' WS Name (WS ':' WS Caption)?
 
 # コマンド
-Command = 'c:' WS Name
+Command = 'c:' WS Name (WS ':' WS Caption)?
 
 # イベント
-Event = 'e:' WS Name
+Event = 'e:' WS Name (WS ':' WS Caption)?
 
 # 集約
-Aggregate = 'a:' WS Name
+Aggregate = 'a:' WS Name　(WS ':' WS Caption)?
 
 # ポリシー
-Policy = 'p:' WS Name
+Policy = 'p:' WS Name　(WS ':' WS Caption)?
 
 # リードモデル
-ReadModel = 'r:' WS Name
+ReadModel = 'r:' WS Name　(WS ':' WS Caption)?
 
 # 線の定義
 Line = Name WS '--' WS Name (WS ':' WS Caption)?
