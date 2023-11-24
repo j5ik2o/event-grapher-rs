@@ -1,3 +1,11 @@
+#[derive(Debug, Clone, PartialEq)]
+pub enum Ast {
+  Name(Name),
+  Arrow(Arrow),
+  Line(Line),
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum NameType {
   User,
   Command,
@@ -6,7 +14,7 @@ pub enum NameType {
   Policy,
   ReadModel,
 }
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Name {
   name_type: NameType,
   name: String,
@@ -60,5 +68,31 @@ impl Name {
       name,
       caption,
     }
+  }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Arrow {
+  from: String,
+  to: String,
+  caption: Option<String>,
+}
+
+impl Arrow {
+  pub fn new(from: String, to: String, caption: Option<String>) -> Self {
+    Self { from, to, caption }
+  }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Line {
+  from: String,
+  to: String,
+  caption: Option<String>,
+}
+
+impl Line {
+  pub fn new(from: String, to: String, caption: Option<String>) -> Self {
+    Self { from, to, caption }
   }
 }
