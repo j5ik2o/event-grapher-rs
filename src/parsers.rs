@@ -90,7 +90,14 @@ fn read_model<'a>() -> Parser<'a, u8, Ast> {
 }
 
 fn element<'a>() -> Parser<'a, u8, Ast> {
-  user() | command() | event() | aggregate() | policy() | read_model()
+  space()
+    * (user().attempt()
+      | command().attempt()
+      | event().attempt()
+      | aggregate().attempt()
+      | policy().attempt()
+      | read_model())
+    - space()
 }
 
 fn relation_ship_parser<'a, F, A>(b: u8, f: F) -> Parser<'a, u8, A>
@@ -324,11 +331,23 @@ pub mod tests {
     test_parser(
       documents(),
       r#"
+        u:"abc":"ユーザ"
+        c:"abc":"ユーザ"
+        e:"abc":"ユーザ"
+        a:"abc":"ユーザ"
+        p:"abc":"ユーザ"
+        r:"abc":"ユーザ"
         "abc"->"def":"ユーザ"
         "abc"--"def":"ユーザ"
         "#
       .as_bytes(),
       vec![
+        Ast::Name(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
+        Ast::Name(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
+        Ast::Name(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),
+        Ast::Name(Name::of_aggregate("abc".to_string(), Some("ユーザ".to_string()))),
+        Ast::Name(Name::of_policy("abc".to_string(), Some("ユーザ".to_string()))),
+        Ast::Name(Name::of_read_model("abc".to_string(), Some("ユーザ".to_string()))),
         Ast::Arrow(Arrow::new(
           "abc".to_string(),
           "def".to_string(),
