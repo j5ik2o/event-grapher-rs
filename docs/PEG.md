@@ -3,10 +3,13 @@
 Document = (Element / Relationship)+
 
 # 要素
-Element = Event / Command / Aggregate / Policy / View
+Element = Actor / Event / Command / Aggregate / Policy / View
 
 # 関係は線や矢印で表現される
 Relationship = Line / Arrow
+
+# アクター
+Actor = 'actor' WS Name
 
 # イベント
 Event = 'event' WS Name
