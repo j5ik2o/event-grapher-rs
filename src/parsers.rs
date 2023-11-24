@@ -54,14 +54,14 @@ fn caption_string<'a>() -> Parser<'a, u8, String> {
 }
 
 fn caption<'a>() -> Parser<'a, u8, Option<String>> {
-  (elm_ref(b':') * caption_string()).opt()
+  space() * (elm_ref(b':') * space() * caption_string()).opt() - space()
 }
 
 fn element_parser<'a, F, A>(l: u8, f: F) -> Parser<'a, u8, A>
 where
   F: Fn(String, Option<String>) -> A + 'a,
   A: Clone + 'a, {
-  let p = (elm_ref(l) + elm_ref(b':')) * name() + caption();
+  let p = (elm_ref(l) + elm_ref(b':') + space()) * name() + caption();
   p.map(move |(n, c)| f(n, c))
 }
 
@@ -117,7 +117,7 @@ fn line<'a>() -> Parser<'a, u8, Ast> {
 }
 
 fn relation_ship<'a>() -> Parser<'a, u8, Ast> {
-  line().attempt() | arrow()
+  space() * (line().attempt() | arrow()) - space()
 }
 
 fn document<'a>() -> Parser<'a, u8, Ast> {
@@ -327,13 +327,13 @@ pub mod tests {
   }
 
   #[test]
-  pub fn test_document() {
+  pub fn test_documents() {
     test_parser(
       documents(),
       r#"
-        u:"abc":"ユーザ"
-        c:"abc":"ユーザ"
-        e:"abc":"ユーザ"
+        u:"abc": "ユーザ"
+        c:"abc" :"ユーザ"
+        e: "abc":"ユーザ"
         a:"abc":"ユーザ"
         p:"abc":"ユーザ"
         r:"abc":"ユーザ"
