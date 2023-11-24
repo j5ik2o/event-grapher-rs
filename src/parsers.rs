@@ -1,3 +1,4 @@
+use crate::ast::Name;
 use oni_comb_parser_rs::prelude::*;
 use std::char::{decode_utf16, REPLACEMENT_CHARACTER};
 
@@ -46,4 +47,36 @@ fn name<'a>() -> Parser<'a, u8, String> {
 
 fn caption<'a>() -> Parser<'a, u8, String> {
   utf16_chars()
+}
+
+fn label<'a, F, A>(l: u8, f: F) -> Parser<'a, u8, A>
+where
+  F: Fn(String, Option<String>) -> A + 'a,
+  A: Clone + 'a, {
+  let p = (elm_ref(l) + elm_ref(b':')) * name() + (elm_ref(b':') * caption()).opt();
+  p.map(move |(n, c)| f(n, c))
+}
+
+fn user<'a>() -> Parser<'a, u8, Name> {
+  label(b'u', |n, c| Name::of_user(n, c))
+}
+
+fn command<'a>() -> Parser<'a, u8, Name> {
+  label(b'c', |n, c| Name::of_command(n, c))
+}
+
+fn event<'a>() -> Parser<'a, u8, Name> {
+  label(b'e', |n, c| Name::of_event(n, c))
+}
+
+fn aggregate<'a>() -> Parser<'a, u8, Name> {
+  label(b'a', |n, c| Name::of_aggregate(n, c))
+}
+
+fn policy<'a>() -> Parser<'a, u8, Name> {
+  label(b'p', |n, c| Name::of_policy(n, c))
+}
+
+fn read_model<'a>() -> Parser<'a, u8, Name> {
+  label(b'r', |n, c| Name::of_read_model(n, c))
 }
