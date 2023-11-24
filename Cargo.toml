@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-oni-comb-parser-rs = "0.0.271"
 argopt = "0.3.0"
+oni-comb-parser-rs = "0.0.271"
+graphviz-rust = "0.6.6"
