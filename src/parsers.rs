@@ -305,7 +305,7 @@ pub mod tests {
   pub fn test_arrow() {
     test_parser(
       arrow(),
-      "\"abc\"->\"def\"".as_bytes(),
+      r#"abc->def"#.as_bytes(),
       Ast::Arrow(Arrow::new("abc".to_string(), "def".to_string(), None)),
     );
   }
