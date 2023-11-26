@@ -1,6 +1,8 @@
+use uuid::Uuid;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Ast {
-  Name(Name),
+  NameDef(Name),
   Arrow(Arrow),
   Line(Line),
 }
@@ -14,11 +16,12 @@ pub enum NameType {
   Policy,
   ReadModel,
 }
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Name {
-  name_type: NameType,
-  name: String,
-  caption: Option<String>,
+  pub name_type: NameType,
+  pub name: String,
+  pub caption: Option<String>,
 }
 
 impl Name {
@@ -73,26 +76,26 @@ impl Name {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Arrow {
-  from: String,
-  to: String,
-  caption: Option<String>,
+  pub from_ref: String,
+  pub to_ref: String,
+  pub caption: Option<String>,
 }
 
 impl Arrow {
   pub fn new(from: String, to: String, caption: Option<String>) -> Self {
-    Self { from, to, caption }
+    Self { from_ref, to_ref, caption }
   }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Line {
-  from: String,
-  to: String,
-  caption: Option<String>,
+  pub from_ref: String,
+  pub to_ref: String,
+  pub caption: Option<String>,
 }
 
 impl Line {
   pub fn new(from: String, to: String, caption: Option<String>) -> Self {
-    Self { from, to, caption }
+    Self { from_ref, to_ref, caption }
   }
 }

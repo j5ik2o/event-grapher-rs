@@ -68,27 +68,27 @@ fn element_parser<'a, F, A>(l: u8, f: F) -> Parser<'a, u8, A>
 }
 
 fn user<'a>() -> Parser<'a, u8, Ast> {
-    element_parser(b'u', |n, c| Ast::Name(Name::of_user(n, c)))
+    element_parser(b'u', |n, c| Ast::NameDef(Name::of_user(n, c)))
 }
 
 fn command<'a>() -> Parser<'a, u8, Ast> {
-    element_parser(b'c', |n, c| Ast::Name(Name::of_command(n, c)))
+    element_parser(b'c', |n, c| Ast::NameDef(Name::of_command(n, c)))
 }
 
 fn event<'a>() -> Parser<'a, u8, Ast> {
-    element_parser(b'e', |n, c| Ast::Name(Name::of_event(n, c)))
+    element_parser(b'e', |n, c| Ast::NameDef(Name::of_event(n, c)))
 }
 
 fn aggregate<'a>() -> Parser<'a, u8, Ast> {
-    element_parser(b'a', |n, c| Ast::Name(Name::of_aggregate(n, c)))
+    element_parser(b'a', |n, c| Ast::NameDef(Name::of_aggregate(n, c)))
 }
 
 fn policy<'a>() -> Parser<'a, u8, Ast> {
-    element_parser(b'p', |n, c| Ast::Name(Name::of_policy(n, c)))
+    element_parser(b'p', |n, c| Ast::NameDef(Name::of_policy(n, c)))
 }
 
 fn read_model<'a>() -> Parser<'a, u8, Ast> {
-    element_parser(b'r', |n, c| Ast::Name(Name::of_read_model(n, c)))
+    element_parser(b'r', |n, c| Ast::NameDef(Name::of_read_model(n, c)))
 }
 
 fn element<'a>() -> Parser<'a, u8, Ast> {
@@ -182,7 +182,7 @@ pub mod tests {
         test_parser(
             user(),
             r#"u:abc"#.as_bytes(),
-            Ast::Name(Name::of_user("abc".to_string(), None)),
+            Ast::NameDef(Name::of_user("abc".to_string(), None)),
         );
     }
 
@@ -191,7 +191,7 @@ pub mod tests {
         test_parser(
             user(),
             r#"u:abc"#.as_bytes(),
-            Ast::Name(Name::of_user("abc".to_string(), None)),
+            Ast::NameDef(Name::of_user("abc".to_string(), None)),
         );
     }
 
@@ -200,7 +200,7 @@ pub mod tests {
         test_parser(
             user(),
             r#"u:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -209,7 +209,7 @@ pub mod tests {
         test_parser(
             user(),
             r#"u:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -218,7 +218,7 @@ pub mod tests {
         test_parser(
             command(),
             "c:abc".as_bytes(),
-            Ast::Name(Name::of_command("abc".to_string(), None)),
+            Ast::NameDef(Name::of_command("abc".to_string(), None)),
         );
     }
 
@@ -227,7 +227,7 @@ pub mod tests {
         test_parser(
             command(),
             r#"c:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -236,7 +236,7 @@ pub mod tests {
         test_parser(
             event(),
             "e:abc".as_bytes(),
-            Ast::Name(Name::of_event("abc".to_string(), None)),
+            Ast::NameDef(Name::of_event("abc".to_string(), None)),
         );
     }
 
@@ -245,7 +245,7 @@ pub mod tests {
         test_parser(
             event(),
             r#"e:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -254,7 +254,7 @@ pub mod tests {
         test_parser(
             aggregate(),
             "a:abc".as_bytes(),
-            Ast::Name(Name::of_aggregate("abc".to_string(), None)),
+            Ast::NameDef(Name::of_aggregate("abc".to_string(), None)),
         );
     }
 
@@ -263,7 +263,7 @@ pub mod tests {
         test_parser(
             aggregate(),
             r#"a:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_aggregate("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_aggregate("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -272,7 +272,7 @@ pub mod tests {
         test_parser(
             policy(),
             r#"p:abc"#.as_bytes(),
-            Ast::Name(Name::of_policy("abc".to_string(), None)),
+            Ast::NameDef(Name::of_policy("abc".to_string(), None)),
         );
     }
 
@@ -283,7 +283,7 @@ pub mod tests {
         test_parser(
             policy(),
             r#"p:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_policy("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_policy("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -294,7 +294,7 @@ pub mod tests {
         test_parser(
             read_model(),
             "r:abc".as_bytes(),
-            Ast::Name(Name::of_read_model("abc".to_string(), None)),
+            Ast::NameDef(Name::of_read_model("abc".to_string(), None)),
         );
     }
 
@@ -305,7 +305,7 @@ pub mod tests {
         test_parser(
             read_model(),
             r#"r:abc:"ユーザ""#.as_bytes(),
-            Ast::Name(Name::of_read_model("abc".to_string(), Some("ユーザ".to_string()))),
+            Ast::NameDef(Name::of_read_model("abc".to_string(), Some("ユーザ".to_string()))),
         );
     }
 
@@ -369,12 +369,12 @@ pub mod tests {
         "#
                 .as_bytes(),
             vec![
-                Ast::Name(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
-                Ast::Name(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
-                Ast::Name(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),
-                Ast::Name(Name::of_aggregate("abc".to_string(), Some("ユーザ".to_string()))),
-                Ast::Name(Name::of_policy("abc".to_string(), Some("ユーザ".to_string()))),
-                Ast::Name(Name::of_read_model("abc".to_string(), Some("ユーザ".to_string()))),
+                Ast::NameDef(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
+                Ast::NameDef(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
+                Ast::NameDef(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),
+                Ast::NameDef(Name::of_aggregate("abc".to_string(), Some("ユーザ".to_string()))),
+                Ast::NameDef(Name::of_policy("abc".to_string(), Some("ユーザ".to_string()))),
+                Ast::NameDef(Name::of_read_model("abc".to_string(), Some("ユーザ".to_string()))),
                 Ast::Arrow(Arrow::new(
                     "abc".to_string(),
                     "def".to_string(),
