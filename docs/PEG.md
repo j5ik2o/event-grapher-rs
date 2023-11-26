@@ -33,7 +33,7 @@ Line = Name WS '--' WS Name (WS ':' WS Caption)?
 Arrow = Name WS '->' WS Name (WS ':' WS Caption)?
 
 # 名前の定義
-Name = '"' (!'"' Char)* '"'
+Name = (!'"' Char)* 
 
 # キャプションの定義
 Caption = '"' (!'"' Char)* '"'
