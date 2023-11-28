@@ -58,6 +58,10 @@ fn caption<'a>() -> Parser<'a, u8, String> {
     space() * elm_ref(b':') * caption_string()
 }
 
+fn title<'a>() -> Parser<'a, u8, Ast> {
+    space() * elm_ref(b't') * elm_ref(b':') * caption_string().map(Ast::TitleDef)
+}
+
 fn element_parser<'a, F, A>(l: u8, f: F) -> Parser<'a, u8, A>
     where
         F: Fn(String, Option<String>) -> A + 'a,
@@ -93,7 +97,9 @@ fn read_model<'a>() -> Parser<'a, u8, Ast> {
 
 fn element<'a>() -> Parser<'a, u8, Ast> {
     space()
-        * (user()
+        * (
+        title()
+        | user()
         | command()
         | event()
         | aggregate()
@@ -126,8 +132,8 @@ fn document<'a>() -> Parser<'a, u8, Ast> {
     space() * (element().attempt() | relation_ship()) - space()
 }
 
-pub fn documents<'a>() -> Parser<'a, u8, Vec<Ast>> {
-    document().of_many0()
+pub fn documents<'a>() -> Parser<'a, u8, Ast> {
+    document().of_many0().map(|elements| Ast::Documents(elements))
 }
 
 #[cfg(test)]
@@ -358,6 +364,7 @@ pub mod tests {
         test_parser(
             documents(),
             r#"
+        t:"title"
         u:abc:"ユーザ"
         c:abc:"ユーザ"
         e:abc:"ユーザ"
@@ -368,7 +375,8 @@ pub mod tests {
         abc--def:"ユーザ"
         "#
                 .as_bytes(),
-            vec![
+            Ast::Documents(vec![
+                Ast::TitleDef("title".to_string()),
                 Ast::NameDef(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
                 Ast::NameDef(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
                 Ast::NameDef(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),
@@ -385,7 +393,7 @@ pub mod tests {
                     "def".to_string(),
                     Some("ユーザ".to_string()),
                 )),
-            ],
+            ]),
         );
     }
 }

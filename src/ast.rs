@@ -2,9 +2,13 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Ast {
+  TitleDef(String),
   NameDef(Name),
   Arrow(Arrow),
   Line(Line),
+  Comment(String),
+  Empty,
+  Documents(Vec<Ast>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -82,7 +86,7 @@ pub struct Arrow {
 }
 
 impl Arrow {
-  pub fn new(from: String, to: String, caption: Option<String>) -> Self {
+  pub fn new(from_ref: String, to_ref: String, caption: Option<String>) -> Self {
     Self { from_ref, to_ref, caption }
   }
 }
@@ -95,7 +99,7 @@ pub struct Line {
 }
 
 impl Line {
-  pub fn new(from: String, to: String, caption: Option<String>) -> Self {
+  pub fn new(from_ref: String, to_ref: String, caption: Option<String>) -> Self {
     Self { from_ref, to_ref, caption }
   }
 }
