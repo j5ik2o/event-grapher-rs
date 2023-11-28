@@ -4,6 +4,6 @@ digraph {{title}} {
         {{name}}[shape=rectangle, style=filled, color="black", fillcolor="orange", {{#if caption}} label="{{caption}}"{{/if}}];
     {{/each}}
     {{#each edges}}
-        {{#if (eq edge_type "Arrow")}}{{from}} -> {{to}}{{/if}}{{#if (eq edge_type "Line")}}{{from}} -- {{to}}{{/if}}{{#if caption}} [label="{{caption}}"]{{/if}};
+        {{from}} -> {{to}};
     {{/each}}
 }

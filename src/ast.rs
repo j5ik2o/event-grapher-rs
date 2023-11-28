@@ -1,5 +1,3 @@
-use uuid::Uuid;
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum Ast {
   TitleDef(String),
@@ -87,7 +85,17 @@ pub struct Arrow {
 
 impl Arrow {
   pub fn new(from_ref: String, to_ref: String, caption: Option<String>) -> Self {
-    Self { from_ref, to_ref, caption }
+    if from_ref.is_empty() {
+      panic!("from_ref must not be empty");
+    }
+    if to_ref.is_empty() {
+      panic!("to_ref must not be empty");
+    }
+    Self {
+      from_ref,
+      to_ref,
+      caption,
+    }
   }
 }
 
@@ -100,6 +108,16 @@ pub struct Line {
 
 impl Line {
   pub fn new(from_ref: String, to_ref: String, caption: Option<String>) -> Self {
-    Self { from_ref, to_ref, caption }
+    if from_ref.is_empty() {
+      panic!("from_ref must not be empty");
+    }
+    if to_ref.is_empty() {
+      panic!("to_ref must not be empty");
+    }
+    Self {
+      from_ref,
+      to_ref,
+      caption,
+    }
   }
 }

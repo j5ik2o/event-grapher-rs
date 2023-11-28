@@ -2,8 +2,12 @@ use crate::ast::{Arrow, Ast, Line, Name};
 use oni_comb_parser_rs::prelude::*;
 use std::char::{decode_utf16, REPLACEMENT_CHARACTER};
 
-fn space<'a>() -> Parser<'a, u8, ()> {
+fn space_with_crlf<'a>() -> Parser<'a, u8, ()> {
   elm_of(b" \t\r\n").of_many0().discard()
+}
+
+fn space<'a>() -> Parser<'a, u8, ()> {
+  elm_of(b" \t").of_many0().discard()
 }
 
 fn chars<'a>() -> Parser<'a, u8, String> {
@@ -16,7 +20,7 @@ fn chars<'a>() -> Parser<'a, u8, String> {
     | elm_ref(b'r').map(|_| &b'\r')
     | elm_ref(b't').map(|_| &b'\t');
   let escape_sequence = elm_ref(b'\\') * special_char;
-  (none_ref_of(b"\\\":-")) // | escape_sequence)
+  (none_ref_of(b"\\\":-"))
     .map(Clone::clone)
     .of_many1()
     .map_res(String::from_utf8)
@@ -71,7 +75,7 @@ where
   A: Clone + 'a,
 {
   let lp = elm_ref(l) + elm_ref(b':');
-  let p = lp * name().debug("name") + caption().debug("caption").opt();
+  let p = space_with_crlf() * lp * name().debug("name") + caption().debug("caption").opt() - space_with_crlf();
   p.map(move |(n, c)| f(n, c))
 }
 
@@ -108,7 +112,9 @@ where
   F: Fn(String, String, Option<String>) -> A + 'a,
   A: Clone + 'a,
 {
-  let p = name() + (elm_ref(b'-') + elm_ref(b)) * name() + caption().opt();
+  let p =
+    space_with_crlf() * name().debug("from") + (elm_ref(b'-') + elm_ref(b)) * name().debug("to") + caption().opt()
+      - space_with_crlf();
   p.map(move |((from, to), c)| f(from, to, c))
 }
 
@@ -125,7 +131,7 @@ fn relation_ship<'a>() -> Parser<'a, u8, Ast> {
 }
 
 fn document<'a>() -> Parser<'a, u8, Ast> {
-  space() * (element().attempt() | relation_ship()) - space()
+  space_with_crlf() * (element().attempt() | relation_ship()) - space_with_crlf()
 }
 
 pub fn documents<'a>() -> Parser<'a, u8, Ast> {
@@ -373,7 +379,7 @@ pub mod tests {
         p:abc:"ユーザ"
         r:abc:"ユーザ"
         abc->def:"ユーザ"
-        abc--def:"ユーザ"
+        abc->def:"ユーザ"
         "#
       .as_bytes(),
       Ast::Documents(vec![
@@ -389,7 +395,7 @@ pub mod tests {
           "def".to_string(),
           Some("ユーザ".to_string()),
         )),
-        Ast::Line(Line::new(
+        Ast::Arrow(Arrow::new(
           "abc".to_string(),
           "def".to_string(),
           Some("ユーザ".to_string()),

@@ -123,6 +123,7 @@ impl DotWriter {
     self.eval_ast(ast);
 
     let dot_string = self.get_dot_string_from_hbs()?;
+    log::debug!("dot_string = {}", dot_string);
     let graph = graphviz_rust::parse(&dot_string)?;
 
     let mut dot_file = File::create(format!("{}.dot", output_file_name))?;
@@ -206,11 +207,14 @@ pub mod tests {
     let mut dot_writer = DotWriter::new();
     let eg = r#"
         t:"title"
-        e:Ordered:"注文された"
-        e:Shipped:"出荷された"
-        Ordered->Shipped
+        e:InventoryReserved:"在庫確保された"
+        e:PaymentProcessed:"決済処理された"
+        e:ShipmentScheduled:"出荷スケジュールされた"
+        InventoryReserved->PaymentProcessed
+        PaymentProcessed->ShipmentScheduled
         "#;
     let ast = crate::parsers::parse(eg.as_bytes()).unwrap();
-    dot_writer.render(&ast, "target/eg").unwrap();
+    log::debug!("{:?}", ast);
+    // dot_writer.render(&ast, "target/eg").unwrap();
   }
 }
