@@ -1,6 +1,6 @@
 mod ast;
+mod dot_writer;
 mod parsers;
-mod visitor;
 
 pub fn add(left: usize, right: usize) -> usize {
   left + right
