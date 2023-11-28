@@ -177,7 +177,7 @@ pub mod tests {
   fn it_works4() {
     env::set_var("RUST_LOG", "debug");
     env_logger::init();
-    let mut visitor = DotWriter::new();
+    let mut dot_writer = DotWriter::new();
     let ast = Ast::Documents(vec![
       Ast::TitleDef("Test".to_string()),
       Ast::NameDef(crate::ast::Name {
@@ -196,6 +196,21 @@ pub mod tests {
         caption: None, //Some("XYZ".to_string()),
       }),
     ]);
-    visitor.render(&ast, "target/test").unwrap();
+    dot_writer.render(&ast, "target/test").unwrap();
+  }
+
+  #[test]
+  fn test() {
+    env::set_var("RUST_LOG", "debug");
+    env_logger::init();
+    let mut dot_writer = DotWriter::new();
+    let eg = r#"
+        t:"title"
+        e:Ordered:"注文された"
+        e:Shipped:"出荷された"
+        Ordered->Shipped
+        "#;
+    let ast = crate::parsers::parse(eg.as_bytes()).unwrap();
+    dot_writer.render(&ast, "target/eg").unwrap();
   }
 }
