@@ -215,6 +215,6 @@ pub mod tests {
         "#;
     let ast = crate::parsers::parse(eg.as_bytes()).unwrap();
     log::debug!("{:?}", ast);
-    // dot_writer.render(&ast, "target/eg").unwrap();
+    dot_writer.render(&ast, "target/eg").unwrap();
   }
 }

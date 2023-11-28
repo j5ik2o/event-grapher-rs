@@ -20,7 +20,7 @@ fn chars<'a>() -> Parser<'a, u8, String> {
     | elm_ref(b'r').map(|_| &b'\r')
     | elm_ref(b't').map(|_| &b'\t');
   let escape_sequence = elm_ref(b'\\') * special_char;
-  (none_ref_of(b"\\\":-"))
+  (none_ref_of(b"\\\":-\n") | escape_sequence)
     .map(Clone::clone)
     .of_many1()
     .map_res(String::from_utf8)
