@@ -1,22 +1,16 @@
+use crate::ast::name_type::NameType;
+
+pub mod name_type;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Ast {
-  TitleDef(String),
+  TitleDef(Name),
   NameDef(Name),
   Arrow(Arrow),
   Line(Line),
   Comment(String),
   Empty,
   Documents(Vec<Ast>),
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum NameType {
-  User,
-  Command,
-  Event,
-  Aggregate,
-  Policy,
-  ReadModel,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -27,6 +21,14 @@ pub struct Name {
 }
 
 impl Name {
+  pub fn of_title(name: String, caption: Option<String>) -> Self {
+    Self {
+      name_type: NameType::Title,
+      name,
+      caption,
+    }
+  }
+
   pub fn of_user(name: String, caption: Option<String>) -> Self {
     Self {
       name_type: NameType::User,

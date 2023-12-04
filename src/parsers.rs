@@ -65,10 +65,6 @@ fn caption<'a>() -> Parser<'a, u8, String> {
   space() * elm_ref(b':') * caption_string()
 }
 
-fn title<'a>() -> Parser<'a, u8, Ast> {
-  space() * elm_ref(b't') * elm_ref(b':') * caption_string().map(Ast::TitleDef)
-}
-
 fn element_parser<'a, F, A>(l: u8, f: F) -> Parser<'a, u8, A>
 where
   F: Fn(String, Option<String>) -> A + 'a,
@@ -77,6 +73,10 @@ where
   let lp = elm_ref(l) + elm_ref(b':');
   let p = space_with_crlf() * lp * name().debug("name") + caption().debug("caption").opt() - space_with_crlf();
   p.map(move |(n, c)| f(n, c))
+}
+
+fn title<'a>() -> Parser<'a, u8, Ast> {
+  element_parser(b't', |n, c| Ast::TitleDef(Name::of_title(n, c)))
 }
 
 fn user<'a>() -> Parser<'a, u8, Ast> {
@@ -145,6 +145,7 @@ pub fn parse<'a>(input: &'a [u8]) -> Result<Ast, ParseError<'a, u8>> {
 #[cfg(test)]
 pub mod tests {
   use super::*;
+  use crate::dot_writer::Title;
   use std::env;
 
   pub fn test_parser<'a, A>(parser: Parser<'a, u8, A>, input: &'a [u8], expected: A)
@@ -371,7 +372,7 @@ pub mod tests {
     test_parser(
       documents(),
       r#"
-        t:"title"
+        t:G:"title"
         u:abc:"ユーザ"
         c:abc:"ユーザ"
         e:abc:"ユーザ"
@@ -383,7 +384,7 @@ pub mod tests {
         "#
       .as_bytes(),
       Ast::Documents(vec![
-        Ast::TitleDef("title".to_string()),
+        Ast::TitleDef(Name::of_title("G".to_string(), Some("title".to_string()))),
         Ast::NameDef(Name::of_user("abc".to_string(), Some("ユーザ".to_string()))),
         Ast::NameDef(Name::of_command("abc".to_string(), Some("ユーザ".to_string()))),
         Ast::NameDef(Name::of_event("abc".to_string(), Some("ユーザ".to_string()))),

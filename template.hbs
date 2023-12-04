@@ -1,9 +1,24 @@
-digraph {{title}} {
+digraph {{title.name}} {
     rankdir = "LR";
-    {{#each nodes}}
-        {{name}}[shape=rectangle, style=filled, color="black", fillcolor="orange", {{#if caption}} label="{{caption}}"{{/if}}];
+    node [shape=box, style=filled, color="black", fillcolor="white"];
+    {{# each nodes }}
+        {{# if (eq node_type "Event") }}
+    {{name}} [fillcolor="orange", {{#if label}} label="{{label}}"{{/if}}]; // {{node_type}}
+        {{/if}}
+        {{# if (eq node_type "Command") }}
+    {{name}} [fillcolor="lightblue", {{#if label}} label="{{label}}"{{/if}}]; // {{node_type}}
+        {{/if}}
+        {{# if (eq node_type "Aggregate") }}
+    {{name}} [fillcolor="lightyellow", {{#if label}} label="{{label}}"{{/if}}]; // {{node_type}}
+        {{/if}}
+        {{# if (eq node_type "Policy") }}
+    {{name}} [fillcolor="plum", {{#if label}} label="{{label}}"{{/if}}]; // {{node_type}}
+        {{/if}}
+        {{# if (eq node_type "ReadModel") }}
+    {{name}} [fillcolor="lightgreen", {{#if label}} label="{{label}}"{{/if}}]; // {{node_type}}
+        {{/if}}
     {{/each}}
     {{#each edges}}
-        {{from}} -> {{to}};
+    {{from}} -> {{to}} [{{#if label}}label="{{label}}"{{/if}}];
     {{/each}}
 }
